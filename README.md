@@ -129,3 +129,24 @@ in lockstep manually:
    lives in two places.
 
 Pixel-perfect parity depends on both.
+
+## License
+
+sensesp-p4-cockpit-wasm 1.0.0 and later is **source available, not open
+source**. See [LICENSE.md](LICENSE.md).
+
+**You may**, free of charge: run it on your own boat or fleet, private or
+commercial; use it for internal company operations; modify it for your own use;
+use it in education and research; and provide professional services around it.
+
+**You may not**: redistribute it, or publish a modified version of it — as
+source, wasm bundle or otherwise. Verbatim copies of official releases may be
+mirrored and cached.
+
+Earlier commits carried no license file. Third-party code linked into the
+prebuilt wasm (LVGL, SDL2, Emscripten) keeps its own license — see
+[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
