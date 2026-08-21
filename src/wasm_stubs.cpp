@@ -25,6 +25,9 @@
 #include "zone_registry.h"
 #include "notifications_registry.h"
 #include "net/sk_put.h"
+#include "audio/voice_control.h"
+#include "audio/chime.h"
+#include "net/drop_here.h"
 
 #include "lvgl.h"
 
@@ -253,6 +256,50 @@ NotificationsRegistry& notifications() {
   static NotificationsRegistry r;
   return r;
 }
+
+// ----- voice ------------------------------------------------------------
+// The voice widgets (voice/PTT, mute_mic, mute_speaker, volume) are
+// panel-local: on the device they drive the Wyoming satellite and the audio
+// codec. Neither exists here, so the preview keeps the state the widgets read
+// back and does nothing else -- enough for the designer to render a tile in
+// its correct on/off position and move a slider.
+
+void VoiceControl::set_ptt_held(bool /*held*/) {
+  // Forwards to the Wyoming satellite on the device; there is nothing to
+  // stream to here, and VoiceControl keeps no PTT state of its own.
+}
+
+int VoiceControl::state_code() const {
+  // 0 = no orchestrator. The preview has none, and the PTT caption renders
+  // its disconnected form, which is the honest thing to show.
+  return 0;
+}
+
+void VoiceControl::set_speaker_muted(bool muted) { speaker_muted_.store(muted); }
+void VoiceControl::set_mic_muted(bool muted) { mic_muted_.store(muted); }
+
+void VoiceControl::set_volume(uint8_t pct, bool /*persist*/) {
+  volume_.store(pct > 100 ? 100 : pct);
+}
+
+VoiceControl& voice() {
+  static VoiceControl v;
+  return v;
+}
+
+// ----- chime / drop_here ------------------------------------------------
+// Both are device actions with no meaning in a preview: there is no speaker
+// to chime and no SignalK server to drop an anchor on. The mute state is kept
+// because a widget reads it back to draw itself.
+
+void Chime::set_muted(bool muted) { muted_ = muted; }
+
+Chime& chime() {
+  static Chime c;
+  return c;
+}
+
+void drop_anchor_here() {}
 
 // ----- sk_put -----------------------------------------------------------
 // In firmware these PUT to the SignalK server. In WASM there's no SK to

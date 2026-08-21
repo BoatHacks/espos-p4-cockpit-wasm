@@ -1,4 +1,4 @@
-# sensesp-p4-cockpit-wasm
+# espos-p4-cockpit-wasm
 
 LVGL + JLP `widget_factory.cpp` compiled to WebAssembly via emscripten
 + SDL2, so the
@@ -42,9 +42,10 @@ emcmake cmake -B build -S .
 cmake --build build -j
 ```
 
-Build the firmware first (`pio run -e p4_cockpit` in
-`../sensesp-p4-cockpit`) so PIO populates the LVGL + ArduinoJson
-checkouts this CMakeLists points at.
+Build the firmware first (`idf.py build` in
+`../sensesp-p4-cockpit`) so the ESP-IDF component manager
+fetches the LVGL + ArduinoJson checkouts this CMakeLists points at into
+`managed_components/`.
 
 ## Repo conventions
 

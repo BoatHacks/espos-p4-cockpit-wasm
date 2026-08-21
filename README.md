@@ -1,4 +1,4 @@
-# sensesp-p4-cockpit-wasm
+# espos-p4-cockpit-wasm
 
 LVGL + JLP widget factory compiled to WebAssembly. Renders the
 **same `widget_factory.cpp`** the device runs, byte-for-byte, into
@@ -91,14 +91,14 @@ mod._free(p)
 ## Dependencies
 
 The build pulls source from the firmware's PIO checkout:
-- LVGL → `../sensesp-p4-cockpit/.pio/libdeps/p4_cockpit/lvgl`
-- widget_factory.cpp → `../sensesp-p4-cockpit/src/jlp/widgets/widget_factory.cpp`
-- ArduinoJson → `../sensesp-p4-cockpit/.pio/libdeps/p4_cockpit/ArduinoJson`
+- LVGL → `../sensesp-p4-cockpit/managed_components/lvgl__lvgl`
+- widget_factory.cpp → `../sensesp-p4-cockpit/main/jlp/widgets/widget_factory.cpp`
+- ArduinoJson → `../sensesp-p4-cockpit/managed_components/bblanchon__arduinojson`
 
 So **build the firmware once first** before building this:
 
 ```bash
-cd ../sensesp-p4-cockpit && pio run -e p4_cockpit
+cd ../sensesp-p4-cockpit && idf.py build
 ```
 
 ## What this is not
