@@ -77,7 +77,9 @@
 #define LV_USE_MSGBOX       0
 #define LV_USE_ROLLER       0
 #define LV_USE_SCALE        0
-#define LV_USE_SLIDER       0
+/* The volume widget is an lv_slider; the firmware's lv_conf enables it,
+ * and a preview that cannot build the same widgets defeats the point. */
+#define LV_USE_SLIDER       1
 #define LV_USE_SPAN         0
 #define LV_USE_SPINBOX      0
 #define LV_USE_SPINNER      0

@@ -21,12 +21,19 @@ set(CMAKE_CXX_STANDARD 17)
 add_compile_definitions(LV_CONF_INCLUDE_SIMPLE)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
+# The firmware checkout we build against. Overridable so this does not depend
+# on a particular directory name next door.
+set(FW_CHECKOUT "${CMAKE_SOURCE_DIR}/../sensesp-p4-cockpit" CACHE PATH
+    "espos-p4-cockpit checkout to take LVGL, ArduinoJson and the JLP sources from")
+
 # LVGL source — share with the firmware checkout so we stay in lockstep.
-set(LVGL_ROOT "${CMAKE_SOURCE_DIR}/../sensesp-p4-cockpit/.pio/libdeps/p4_cockpit/lvgl")
+# ESP-IDF's component manager puts it in managed_components/; the old
+# .pio/libdeps path is from the PlatformIO era and no longer exists.
+set(LVGL_ROOT "${FW_CHECKOUT}/managed_components/lvgl__lvgl")
 if(NOT EXISTS "${LVGL_ROOT}/lvgl.h")
   message(FATAL_ERROR
     "LVGL not found at ${LVGL_ROOT}. "
-    "Build the firmware once first so PIO downloads it.")
+    "Build the firmware once first so the component manager fetches it.")
 endif()
 
 file(GLOB_RECURSE LVGL_SOURCES
@@ -42,8 +49,9 @@ target_include_directories(lvgl PUBLIC "${LVGL_ROOT}" "${LVGL_ROOT}/src")
 
 # Firmware sources we reuse verbatim (single source of truth: any
 # widget code change must benefit both target and preview).
-set(FW_ROOT     "${CMAKE_SOURCE_DIR}/../sensesp-p4-cockpit/src/jlp")
-set(JSON_ROOT   "${CMAKE_SOURCE_DIR}/../sensesp-p4-cockpit/.pio/libdeps/p4_cockpit/ArduinoJson/src")
+# main/jlp since the espOS port; it was src/jlp under PlatformIO.
+set(FW_ROOT     "${FW_CHECKOUT}/main/jlp")
+set(JSON_ROOT   "${FW_CHECKOUT}/managed_components/bblanchon__arduinojson/src")
 if(NOT EXISTS "${FW_ROOT}/widgets/widget_factory.cpp")
   message(FATAL_ERROR "widget_factory.cpp not found at ${FW_ROOT}")
 endif()
@@ -62,6 +70,10 @@ target_include_directories(jlp_widgets PUBLIC
   "${CMAKE_SOURCE_DIR}/src/shim"
   "${FW_ROOT}"
   "${FW_ROOT}/widgets"
+  "${FW_ROOT}/audio"
+  # chime.h pulls espos_audio/audio_driver.h since the espOS port. Only the
+  # header is needed here -- the driver itself belongs to the device.
+  "${FW_CHECKOUT}/espos/components/espos_audio/include"
   "${JSON_ROOT}")
 target_link_libraries(jlp_widgets PUBLIC lvgl)
 # ArduinoJson uses some Arduino macros around String which we don't
